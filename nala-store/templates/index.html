@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر نالا | NALA Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- 📢 شريط إعلاني متحرك من اليمين إلى اليسار (زي نشرة الأخبار) -->
+  <div class="announcement-bar">
+    <div class="marquee-track">
+      <span>✨ طباعة ونقش الأسماء المخصصة حسب الطلب على المباخر والتيشرتات الأنيقة • التوصيل متوفر لجميع المدن الليبية 🚚</span>
+      <span>✨ طباعة ونقش الأسماء المخصصة حسب الطلب على المباخر والتيشرتات الأنيقة • التوصيل متوفر لجميع المدن الليبية 🚚</span>
+    </div>
+  </div>
+
+  <!-- 🏆 الهيدر الاحترافي -->
+  <div class="brand-header">
+    <div class="brand-logo">متجر نالا ✦</div>
+    <div class="brand-tagline">فخامة التصميم • مباخر والتيشرتات مخصصة بالأسماء</div>
+  </div>
+
+  <!-- 🔘 أزرار الفلترة التفاعلية -->
+  <!-- 🔘 أزرار الفلترة التفاعلية (مطابقة للكومبو بوكس تماماً) -->
+  <div class="filter-container">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">الكل ✦</button>
+    <button class="filter-btn" onclick="filterProducts('مبخرة', this)">🪵 مباخر مخصصة</button>
+    <button class="filter-btn" onclick="filterProducts('تيشرت', this)">👕 تيشرتات مطبوعة</button>
+    <button class="filter-btn" onclick="filterProducts('أكواب', this)">☕ أكواب مخصصة</button>
+  </div>
+
+  <!-- شبكة عرض المنتجات -->
+  <div class="products-grid" id="productsContainer">
+    <!-- تحمّل المنتجات تلقائياً عبر JavaScript -->
+  </div>
+
+  <!-- Modal نافذة الطلب الزجاجية -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+
+      <div class="modal-title" id="modalProductTitle">اسم المنتج</div>
+      <div class="modal-subtitle">تخصيص الطلب المباشر</div>
+
+      <div class="form-group">
+        <label class="form-label">الاسم المطلوب نقشه / طباعته:</label>
+        <input type="text" id="customNameInput" class="form-input" placeholder="اكتب الاسم هنا (مثال: أيوب / سارة)">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">العدد / الكمية:</label>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(-1)">-</button>
+          <span class="qty-val" id="qtyVal">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+
+      <div class="modal-summary">
+        <span style="color: #64748b; font-weight: 700;">المبلغ الإجمالي:</span>
+        <div class="total-price">
+          <span id="totalPriceVal">0</span>
+          <span style="font-size:0.9rem; color:var(--primary-red);">د.ل</span>
+        </div>
+      </div>
+
+      <button class="btn-submit-order" onclick="sendToWhatsApp()">
+        <span>إرسال الطلب عبر الواتساب 💬</span>
+      </button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
