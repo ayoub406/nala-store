@@ -6,10 +6,129 @@
   <title>متجر نالا | NALA Store</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .btn-main {
+      background: #ef4444;
+      color: #ffffff;
+      font-weight: 800;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      width: 100%;
+      text-align: center;
+    }
+    .btn-main:hover { background: #dc2626; transform: translateY(-2px); }
+
+    /* أزرار الفلترة */
+    .filter-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #334155;
+      font-weight: 700;
+      font-family: 'Cairo', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .filter-btn.active {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+    }
+
+    /* تعديل عرض وصورة المنتجات لتكون بالعرض وملء المساحة بشكل أنيق ومكبر */
+    .product-img-wrapper {
+      position: relative;
+      background: #0f172a;
+      overflow: hidden;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* لملء المساحة وقص الأطراف الزائدة لتظهر أوسع وأكبر */
+      transition: transform 0.4s ease;
+    }
+    .product-img-wrapper:hover img {
+      transform: scale(1.08); /* تأثير التكبير البسيط عند المرور */
+    }
+
+    /* سلة الشراء العائمة */
+    .cart-float-btn {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: #0f172a;
+      color: #fff;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      z-index: 1000;
+      transition: transform 0.2s;
+    }
+    .cart-float-btn:hover { transform: scale(1.05); }
+    .cart-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 900;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* سلة المشتريات الجانبية */
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      left: -400px;
+      width: 380px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+      z-index: 1100;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .cart-drawer.open { left: 0; }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
+    .cart-items { flex: 1; overflow-y: auto; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+  </style>
 </head>
 <body>
 
-  <!-- 📢 شريط إعلاني متحرك من اليمين إلى اليسار (زي نشرة الأخبار) -->
+  <!-- شريط إعلاني متحرك -->
   <div class="announcement-bar">
     <div class="marquee-track">
       <span>✨ طباعة ونقش الأسماء المخصصة حسب الطلب على المباخر والتيشرتات الأنيقة • التوصيل متوفر لجميع المدن الليبية 🚚</span>
@@ -17,62 +136,365 @@
     </div>
   </div>
 
-  <!-- 🏆 الهيدر الاحترافي -->
-  <div class="brand-header">
-    <div class="brand-logo">متجر نالا ✦</div>
-    <div class="brand-tagline">فخامة التصميم • مباخر والتيشرتات مخصصة بالأسماء</div>
+  <!-- الهيدر -->
+  <div class="brand-header" style="text-align: center; padding: 20px;">
+    <div class="brand-logo" style="font-size: 1.8rem; font-weight: 900; color: #0f172a;">متجر نالا ✦</div>
+    <div class="brand-tagline" style="color: #64748b; font-size: 0.9rem;">فخامة التصميم • مباخر والتيشرتات مخصصة بالأسماء</div>
   </div>
 
-  <!-- 🔘 أزرار الفلترة التفاعلية -->
-  <!-- 🔘 أزرار الفلترة التفاعلية (مطابقة للكومبو بوكس تماماً) -->
-  <div class="filter-container">
+  <!-- أيقونة السلة العائمة -->
+  <div class="cart-float-btn" onclick="toggleCart()">
+    🛒
+    <span class="cart-badge" id="cartCount">0</span>
+  </div>
+
+  <!-- لوحة سلة الشراء الجانبية -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3 style="font-weight: 900; margin:0;">سلة المشتريات 🛍️</h3>
+      <button onclick="toggleCart()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+    </div>
+    <div class="cart-items" id="cartItemsContainer">
+      <p style="text-align:center; color:#64748b; margin-top:20px;">السلة فارغة حالياً</p>
+    </div>
+    <div style="border-top: 2px solid #f1f5f9; padding-top: 15px;">
+      <div style="display:flex; justify-content:space-between; font-weight:800; margin-bottom:15px;">
+        <span>الإجمالي:</span>
+        <span><span id="cartTotalPrice">0</span> د.ل</span>
+      </div>
+      <button type="button" onclick="openCheckoutModal(event)" class="btn-main">إتمام الطلب والدفع 💳</button>
+    </div>
+  </div>
+
+  <!-- أزرار الفلترة -->
+  <div class="filter-container" style="display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
     <button class="filter-btn active" onclick="filterProducts('all', this)">الكل ✦</button>
     <button class="filter-btn" onclick="filterProducts('مبخرة', this)">🪵 مباخر مخصصة</button>
     <button class="filter-btn" onclick="filterProducts('تيشرت', this)">👕 تيشرتات مطبوعة</button>
     <button class="filter-btn" onclick="filterProducts('أكواب', this)">☕ أكواب مخصصة</button>
   </div>
 
-  <!-- شبكة عرض المنتجات -->
-  <div class="products-grid" id="productsContainer">
-    <!-- تحمّل المنتجات تلقائياً عبر JavaScript -->
-  </div>
+  <!-- شبكة المنتجات -->
+  <div class="products-grid" id="productsContainer"></div>
 
-  <!-- Modal نافذة الطلب الزجاجية -->
-  <div class="modal-overlay" id="orderModal">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeModal()">✕</button>
+  <!-- نافذة Modal تفاصيل الدفع والاستلام الفخمة -->
+  <div id="orderModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 999999; padding: 15px; box-sizing: border-box;">
+    <div style="background: #ffffff; padding: 25px; border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: right; direction: rtl;">
 
-      <div class="modal-title" id="modalProductTitle">اسم المنتج</div>
-      <div class="modal-subtitle">تخصيص الطلب المباشر</div>
+      <button type="button" onclick="closeModal()" style="position: absolute; top: 20px; left: 20px; background: #f1f5f9; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center;">✕</button>
 
-      <div class="form-group">
-        <label class="form-label">الاسم المطلوب نقشه / طباعته:</label>
-        <input type="text" id="customNameInput" class="form-input" placeholder="اكتب الاسم هنا (مثال: أيوب / سارة)">
+      <div style="font-size: 1.3rem; font-weight: 900; margin-bottom: 5px; color: #0f172a;">إتمام الطلب والدفع 💳</div>
+      <div style="color: #64748b; font-size: 0.85rem; margin-bottom: 20px;">حدد بياناتك، طريقة الاستلام، وطريقة الدفع لإتمام طلبك بكل فخامة</div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 5px; font-size: 0.9rem; color: #1e293b;">الاسم الثلاثي:</label>
+        <input type="text" id="customerFullName" style="width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-family: 'Cairo'; outline: none;" placeholder="اكتب اسمك الكريم هنا...">
       </div>
 
-      <div class="form-group">
-        <label class="form-label">العدد / الكمية:</label>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(-1)">-</button>
-          <span class="qty-val" id="qtyVal">1</span>
-          <button class="qty-btn" onclick="changeQty(1)">+</button>
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 5px; font-size: 0.9rem; color: #1e293b;">رقم الهاتف:</label>
+        <input type="text" id="customerPhone" style="width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-family: 'Cairo'; outline: none;" value="0922798054" placeholder="مثال: 0922798054">
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 5px; font-size: 0.9rem; color: #1e293b;">طريقة الاستلام:</label>
+        <select id="deliveryMethodSelect" style="width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; font-family: 'Cairo'; outline: none;">
+          <option value="توصيل للمنزل">توصيل للمنزل 🚚</option>
+          <option value="استلام مباشر">استلام مباشر من المحل 🏪</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 5px; font-size: 0.9rem; color: #1e293b;">طريقة الدفع:</label>
+        <select id="paymentMethodSelect" onchange="toggleBankDetails()" style="width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; font-family: 'Cairo'; outline: none;">
+          <option value="دفع نقدي">دفع نقدي عند الاستلام (كاش) 💵</option>
+          <option value="حوالة مصرفية">حوالة مصرفية (مصرف شمال إفريقيا) 🏛️</option>
+        </select>
+      </div>
+
+      <div id="bankDetailsBox" style="display: none; background: #f0f9ff; border: 2px dashed #0284c7; padding: 14px; border-radius: 12px; margin-bottom: 15px; font-size: 0.85rem;">
+        <p style="font-weight: 800; color: #0369a1; margin: 0 0 8px 0;">بيانات التحويل عبر مصرف شمال إفريقيا:</p>
+        <p style="margin: 3px 0; color: #334155;">اسم المستفيد: <strong>نرجس عبد السلام علي</strong></p>
+        <p style="margin: 3px 0; color: #334155;">رقم الحساب: <strong style="color: #e11d48;">0123456789012345</strong></p>
+        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #bae6fd; color: #0284c7; font-weight: 700; line-height: 1.5;">
+          📌 ملاحظة هامة: يرجى إرسال صورة إيصال الحوالة عبر الواتساب لتأكيد الطلب فوراً.
         </div>
       </div>
 
-      <div class="modal-summary">
-        <span style="color: #64748b; font-weight: 700;">المبلغ الإجمالي:</span>
-        <div class="total-price">
-          <span id="totalPriceVal">0</span>
-          <span style="font-size:0.9rem; color:var(--primary-red);">د.ل</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f8fafc; padding: 12px 15px; border-radius: 10px;">
+        <span style="color: #64748b; font-weight: 700; font-size: 0.9rem;">المبلغ الإجمالي:</span>
+        <div style="font-size: 1.2rem; font-weight: 900; color: #0f172a;">
+          <span id="checkoutTotalPrice">0</span>
+          <span style="font-size:0.85rem; color:#ef4444;">د.ل</span>
         </div>
       </div>
 
-      <button class="btn-submit-order" onclick="sendToWhatsApp()">
-        <span>إرسال الطلب عبر الواتساب 💬</span>
+      <button type="button" onclick="sendToWhatsApp()" style="background: #ef4444; color: #ffffff; font-weight: 800; border: none; padding: 12px; border-radius: 12px; cursor: pointer; width: 100%; text-align: center; font-size: 1rem; font-family: 'Cairo'; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+        إرسال الطلب عبر الواتساب وتأكيده 💬
       </button>
     </div>
   </div>
 
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <!-- السكربتات البرمجية -->
+  <script>
+    let cart = [];
+    let productsData = [];
+
+    async function fetchProducts() {
+      try {
+        const res = await fetch('/api/products');
+        productsData = await res.json();
+        renderProducts(productsData);
+      } catch (err) {
+        document.getElementById('productsContainer').innerHTML = '<div style="text-align:center; padding:20px; color:#ef4444; grid-column:1/-1;">حدث خطأ في جلب المنتجات!</div>';
+      }
+    }
+
+    function renderProducts(items) {
+      const container = document.getElementById('productsContainer');
+      if (!container) return;
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; grid-column: 1/-1;">لا توجد منتجات مضافة حالياً.</div>';
+        return;
+      }
+
+      container.innerHTML = items.map((item) => {
+        const avg = item.avg_rating || 0;
+        const starsHtml = '⭐'.repeat(Math.floor(avg)) + '☆'.repeat(5 - Math.floor(avg));
+
+        return `
+          <div style="display: flex; flex-direction: column; justify-content: space-between; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div>
+              <!-- حاوية الصورة المكبرة والعريضة مع تأثير التكبير بسلاسة -->
+              <div class="product-img-wrapper">
+                <img src="${item.image}" alt="${item.title}">
+              </div>
+              <div style="padding: 15px;">
+                <div style="color: #0284c7; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px;">متجر نالا ✦</div>
+                <h3 style="font-size: 1.1rem; font-weight: 900; margin-bottom: 8px; color:#0f172a;">${item.title}</h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 10px;">${item.description || ''}</p>
+
+                <!-- قسم التقييمات -->
+                <div style="margin: 10px 0; padding: 8px; background: #f8fafc; border-radius: 8px;">
+                  <div style="color: #f59e0b; font-size: 14px;">
+                    ${starsHtml} <span style="color: #64748b; font-size: 12px;">(${avg} / 5)</span>
+                  </div>
+                  <form onsubmit="submitReview(event, ${item.id})" style="margin-top: 8px; display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; gap: 5px;">
+                      <select name="rating" style="padding: 4px; font-size: 12px; border-radius: 4px; width: 60%; border: 1px solid #cbd5e1; font-family:'Cairo';">
+                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4)</option>
+                        <option value="3">⭐⭐⭐ (3)</option>
+                        <option value="2">⭐⭐ (2)</option>
+                        <option value="1">⭐ (1)</option>
+                      </select>
+                      <input type="text" name="customer_name" placeholder="اسمك" required style="padding: 4px; font-size: 12px; border-radius: 4px; width: 40%; border: 1px solid #cbd5e1; font-family:'Cairo';">
+                    </div>
+                    <button type="submit" style="background: #0284c7; color: white; border: none; padding: 4px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family:'Cairo';">أرسل تقييمك</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div style="padding: 0 15px 15px 15px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 10px;">
+                <div>
+                  <span style="font-size: 0.8rem; color: #64748b;">السعر</span>
+                  <div style="font-size: 1.2rem; font-weight: 900; color: #0f172a;">${item.price} <span style="font-size: 0.9rem; color: #ef4444;">د.ل</span></div>
+                </div>
+                <button type="button" class="btn-main" onclick="addToCart(${item.id})" style="width: auto; padding: 8px 14px; font-size: 0.9rem;">
+                  إضافة للسلة 🛒
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterProducts(category, btnElement) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+
+      if (category === 'all') {
+        renderProducts(productsData);
+      } else {
+        renderProducts(productsData.filter(p => p.category === category));
+      }
+    }
+
+    function toggleCart() {
+      document.getElementById('cartDrawer').classList.toggle('open');
+    }
+
+    function toggleBankDetails() {
+      const paymentSelect = document.getElementById('paymentMethodSelect');
+      const bankBox = document.getElementById('bankDetailsBox');
+      bankBox.style.display = paymentSelect.value === 'حوالة مصرفية' ? 'block' : 'none';
+    }
+
+    function addToCart(productId) {
+      const product = productsData.find(p => p.id === productId);
+      if (!product) return;
+
+      const existing = cart.find(item => item.id === productId);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ id: product.id, title: product.title, price: product.price, quantity: 1 });
+      }
+      updateCartUI();
+      alert("تمت إضافة المنتج إلى السلة بنجاح! 🛒");
+    }
+
+    function updateCartUI() {
+      const cartCount = document.getElementById('cartCount');
+      const cartItemsContainer = document.getElementById('cartItemsContainer');
+      const cartTotalPrice = document.getElementById('cartTotalPrice');
+
+      let totalCount = 0;
+      let totalPrice = 0;
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:20px;">السلة فارغة حالياً</p>';
+      } else {
+        cartItemsContainer.innerHTML = cart.map((item, index) => {
+          totalCount += item.quantity;
+          totalPrice += item.price * item.quantity;
+          return `
+            <div class="cart-item">
+              <div>
+                <strong>${item.title}</strong><br>
+                <small style="color: #64748b;">${item.price} د.ل × ${item.quantity}</small>
+              </div>
+              <button type="button" onclick="removeFromCart(${index})" style="background:#fee2e2; color:#ef4444; border:none; padding:4px 8px; border-radius:6px; cursor:pointer;">حذف</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (cartCount) cartCount.innerText = totalCount;
+      if (cartTotalPrice) cartTotalPrice.innerText = totalPrice;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+    }
+
+    function openCheckoutModal(event) {
+      if (event) event.preventDefault();
+
+      if (cart.length === 0) {
+        alert("سلة المشتريات فارغة!");
+        return;
+      }
+
+      document.getElementById('checkoutTotalPrice').innerText = document.getElementById('cartTotalPrice').innerText;
+
+      const modal = document.getElementById('orderModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+
+      const drawer = document.getElementById('cartDrawer');
+      if (drawer) {
+        drawer.classList.remove('open');
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('orderModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    async function submitReview(event, productId) {
+      event.preventDefault();
+      const form = event.target;
+      const rating = form.elements['rating'].value;
+      const customerName = form.elements['customer_name'].value;
+
+      try {
+        const res = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ product_id: productId, rating: parseInt(rating), customer_name: customerName })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("شكراً لك! تم إضافة تقييمك بنجاح.");
+          fetchProducts();
+        } else {
+          alert("حدث خطأ أثناء إرسال التقييم.");
+        }
+      } catch (err) {
+        alert("خطأ في الاتصال بالسيرفر!");
+      }
+    }
+
+    async function sendToWhatsApp() {
+      const fullName = document.getElementById('customerFullName').value.trim();
+      const phone = document.getElementById('customerPhone').value.trim();
+      const delivery = document.getElementById('deliveryMethodSelect').value;
+      const payment = document.getElementById('paymentMethodSelect').value;
+      const totalPrice = document.getElementById('cartTotalPrice').innerText;
+
+      if (!fullName || !phone) {
+        alert("الرجاء إدخال الاسم الثلاثي ورقم الهاتف!");
+        return;
+      }
+
+      let itemsText = cart.map(i => `- ${i.title} (الكمية: ${i.quantity}, السعر: ${i.price * i.quantity} د.ل)`).join('\n');
+
+      try {
+        for (let item of cart) {
+          await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              product_title: item.title,
+              custom_name: fullName,
+              quantity: item.quantity,
+              total_price: item.price * item.quantity,
+              delivery_method: delivery,
+              payment_method: payment
+            })
+          });
+        }
+      } catch (e) {
+        console.log("Error saving orders");
+      }
+
+      let paymentText = "";
+      if (payment === 'حوالة مصرفية') {
+        paymentText = `\n🏛️ *طريقة الدفع:* حوالة مصرفية (مصرف شمال إفريقيا)\n📌 *الحساب المحول عليه:* 029011010972013 (نرجس عبد السلام علي )\n📸 *(ملاحظة العميل: سيتم إرسال صورة إيصال الحوالة عبر الواتساب لتأكيد الطلب)*`;
+      } else {
+        paymentText = `\n💵 *طريقة الدفع:* دفع نقدي عند الاستلام (كاش)`;
+      }
+
+      const message = `✨ *طلب جديد من متجر نالا (NALA)* ✨\n👤 *الاسم:* ${fullName}\n📞 *الهاتف:* ${phone}\n🚚 *طريقة الاستلام:* ${delivery}${paymentText}\n\n📦 *المنتجات:* \n${itemsText}\n\n💰 *الإجمالي الكلي:* ${totalPrice} د.ل`;
+
+      const whatsappUrl = `https://wa.me/218917948115?text=${encodeURIComponent(message)}`;
+
+      // محاولة فتح الواتساب تلقائياً
+      window.open(whatsappUrl, '_blank');
+
+      cart = [];
+      updateCartUI();
+      closeModal();
+
+      // تنبيه ضمان الانتقال للواتساب في حال حظره متصفح الهاتف
+      setTimeout(() => {
+        if (confirm(" اضغط 'موافق' لفتح محادثة الواتساب وتأكيد طلبك الآن 💬")) {
+          window.location.href = whatsappUrl;
+        }
+      }, 500);
+    }
+
+    window.onload = fetchProducts;
+  </script>
 </body>
 </html>
